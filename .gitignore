@@ -1,0 +1,11 @@
+fbmain*
+fb_main*
+main
+foo
+fritzbox
+parseline
+manage0
+*.o
+*.so
+*.a
+

@@ -1,0 +1,12 @@
+ o unter git stellen
+ o slot- oder hook-konzept: plugins senden nicht mehr "KICK :foo", sondern
+   rufen parent->do("KICK", arg1, ...) auf
+   returnval: -1=no such hook, -2 .. -inf = error, 0..inf=ok
+   einige dinge, wie kick, ban, kickban, stellt drunkenman selbst bereit
+   diese, und alle undefinierten können durch hooks überschrieben werden
+   so kann z.B. drunkenman's kick nur kicken, ein spezielles kick aber
+   noch für 3 sec bannen, um autorejoins zu vermeiden
+   
+   plugins können folgendes tun:
+   if (parent->do("timedkick"...)<0) parent->do("normalkick")
+

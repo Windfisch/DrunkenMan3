@@ -1,0 +1,10 @@
+BIN = main
+OBJS = main.o TChannel.o TConnection.o TPluginParent.o TPluginParentLight.o TSession.o TUserList.o TConfig.o TPlugin.o myfuncs.o
+CC = gcc
+CFLAGS = -O2
+LDFLAGS = -s
+
+
+$(BIN): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(BIN) $(OBJS)
+main.o 
