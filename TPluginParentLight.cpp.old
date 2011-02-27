@@ -1,6 +1,0 @@
-#include "TPluginParentLight.h"
-
-void TPluginParentLight::pluginsay(string what)
-{
-	pluginsend("PRIVMSG "+get_name()+" :"+what);
-}

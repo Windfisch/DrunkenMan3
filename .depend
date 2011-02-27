@@ -1,0 +1,21 @@
+main.o: main.cpp myfuncs.h TUserList.h mytypes.h TConfigReadOnly.h \
+  TPlugin.h TSession.h TPluginParent.h TPluginParentLight.h \
+  TConnectionInterface.h TConnection.h TChannel.h TConfig.h main.h
+TChannel.o: TChannel.cpp TChannel.h mytypes.h TConfigReadOnly.h myfuncs.h \
+  TPluginParent.h TPlugin.h TPluginParentLight.h TConnectionInterface.h \
+  TUserList.h TConnection.h TSession.h
+TConnection.o: TConnection.cpp TConnection.h mytypes.h TConfigReadOnly.h \
+  myfuncs.h TConnectionInterface.h TUserList.h TPluginParent.h TPlugin.h \
+  TPluginParentLight.h TSession.h TChannel.h
+TPluginParent.o: TPluginParent.cpp TPluginParent.h mytypes.h \
+  TConfigReadOnly.h myfuncs.h TPlugin.h TPluginParentLight.h \
+  TConnectionInterface.h TUserList.h TConnection.h TSession.h TChannel.h
+TUserList.o: TUserList.cpp TUserList.h mytypes.h TConfigReadOnly.h \
+  myfuncs.h
+myfuncs.o: myfuncs.cpp myfuncs.h
+TConfig.o: TConfig.cpp TConfig.h TConfigReadOnly.h myfuncs.h
+TPlugin.o: TPlugin.cpp TPlugin.h mytypes.h TConfigReadOnly.h myfuncs.h \
+  main.h TConfig.h
+TSession.o: TSession.cpp TSession.h mytypes.h TConfigReadOnly.h myfuncs.h \
+  TPluginParent.h TPlugin.h TPluginParentLight.h TConnectionInterface.h \
+  TUserList.h TConnection.h TChannel.h
