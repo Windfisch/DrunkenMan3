@@ -18,7 +18,7 @@ extern "C" void plugin (plugincontext* context, ircmessage msg, TPluginParentLig
 {
 	if (reason&PFLAGS_EXEC_ONDEMAND)
 		if (ucase(msg.command)=="PRIVMSG")
-			if (parent->get_parent()->ismaster(msg.origin))
+			if (parent->get_parent()->ismaster(msg.origin_raw))
 				parent->get_parent()->quit(msg.origin+" told me to quit. cya!");
 				//parent->get_parent()->send (msg.content.substr(6)+NEWLINE);
 }

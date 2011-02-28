@@ -26,30 +26,76 @@ using namespace std;
 
 #include <iostream>
 #include <string>
-
-using namespace std;
+#include <sstream>
 
 #include "../TConnectionInterface.h"
 #include "../TPluginParentLight.h"
-#include "../TUserList.h"
+//#include "../TUserList.h"
+#include <vector>
 #include "../mytypes.h"
 #include "../myfuncs.h"
 
+struct whoisinfo
+{
+	string who;
+	string host;
+	bool proc;
+};
+
+inline std::string tostring(int x)
+ {
+   std::ostringstream o;
+   if (!(o << x))
+     throw;
+   return o.str();
+ } 
+
+vector<whoisinfo>::iterator whereinlist(vector<whoisinfo>* l, string s)
+{
+	for (vector<whoisinfo>::iterator i=l->begin();i!=l->end();i++)
+		if (  lcase( i->who ) == lcase(s)  )
+			return i;
+			
+	return l->end();
+}
+
 extern "C" void init(int* csize, int* conndefault, int* chandefault, int* sessdefault)
 {
-	*csize=sizeof(char)+sizeof(string *)+sizeof(TUserList *)+sizeof(int); *conndefault=0; *chandefault=PFLAGS_EXEC_ONDEMAND; *sessdefault=PFLAGS_EXEC_ONDEMAND;
+	*csize=sizeof(char)+sizeof(string *)+sizeof(vector<whoisinfo> *)+sizeof(int); *conndefault=0; *chandefault=PFLAGS_EXEC_ONDEMAND; *sessdefault=PFLAGS_EXEC_ONDEMAND;
 }
 
 extern "C" void plugin (plugincontext* context, ircmessage msg, TPluginParentLight* parent, int reason)
 {
-	int* whoiscnt=(int*) ( (TUserList**) ( (string**) ( (char*)  context->data +1) +1) +1);
+	int* whoiscnt=(int*) ( (vector<whoisinfo> **) ( (string**) ( (char*)  context->data +1) +1) +1);
 	if (reason&PFLAGS_EXEC_ONDEMAND)
 	{
 		if (ucase(msg.command)=="PRIVMSG")
 		{
 			if (*((char*)(context->data)) != 0)
 			{
-				parent->say("sorry, try again later.");
+				if (lcase(trim(ntharg(msg.content,2)))=="abort")
+				{
+					parent->say ("aborted for channel "+**  ((string**)((char*)context->data+1)));
+
+					string ** cptrdest= (string**) ((char*) context->data  +  1);
+					if (*cptrdest)
+						delete (*cptrdest);
+					*cptrdest=NULL;
+					
+					vector<whoisinfo> **lptr= (vector<whoisinfo> **) ((string**)(((char*) context->data+1))+1);					
+					*lptr=new vector<whoisinfo>;
+					if (*lptr)
+						delete (*lptr);
+					*lptr=NULL;
+					
+					*((char*)(context->data))=0;
+					
+					context->flags=PFLAGS_EXEC_ONDEMAND;
+				}
+				else
+				{
+					parent->say("sorry, try again later.");
+				}
 			}
 			else
 			{
@@ -71,16 +117,11 @@ extern "C" void plugin (plugincontext* context, ircmessage msg, TPluginParentLig
 					
 					*cptrdest=chanptr;
 					
-					TUserList** lptr= (TUserList**) ((string**)(((char*) context->data+1))+1);
+					vector<whoisinfo> **lptr= (vector<whoisinfo> **) ((string**)(((char*) context->data+1))+1);
 					
-					*lptr=new TUserList;
-					cout << "lptr=" << lptr <<"/" << *lptr << endl;
-					
+					*lptr=new vector<whoisinfo>;
 					
 					*whoiscnt=0;
-//					parent->say ("exiting commandmode");
-					//((string**)((char*)context->data+1))=chanptr;
-					//*((string*) ((char*)context->data + 1))=chanptr;
 				}
 			}
 		}
@@ -88,8 +129,9 @@ extern "C" void plugin (plugincontext* context, ircmessage msg, TPluginParentLig
 	
 	if (reason&PFLAGS_EXEC_ONANYEVENT)
 	{
-		TUserList** lptr= (TUserList**) ((string**)(((char*) context->data+1))+1);
-		TUserList* liste=*lptr;
+		vector<whoisinfo>** lptr= (vector<whoisinfo>**) ((string**)(((char*) context->data+1))+1);
+		vector<whoisinfo>* liste=*lptr;
+		
 		string name;
 		name=   **  ((string**)((char*)context->data+1));
 		int numcmd=atoi(msg.command.c_str());
@@ -103,7 +145,14 @@ extern "C" void plugin (plugincontext* context, ircmessage msg, TPluginParentLig
 				{
 					if ((temp[0]=='+') || (temp[0]=='@'))
 						temp=temp.substr(1);
-					liste->addtolist(temp);
+					//liste->addtolist(temp);
+					
+					whoisinfo structtemp;
+					structtemp.who=temp;
+					structtemp.host="";
+					structtemp.proc=false;
+					liste->push_back(structtemp);
+					
 					parent->get_parent()->send("whois "+temp+NEWLINE);
 					(*whoiscnt)++;
 				}
@@ -111,16 +160,20 @@ extern "C" void plugin (plugincontext* context, ircmessage msg, TPluginParentLig
 		}
 		if (numcmd==366)
 		{
-			parent->say ("fertig empfangen...");
+//			parent->say ("fertig empfangen...");
 			*((char*)(context->data)) = 2;
 		}
 		
 		if (numcmd==311)
 		{
 //			parent->say ("whoisantwort für "+ntharg(msg.params,2)+": "+ntharg(msg.params,4));
-			if (liste->isinlist(ntharg(msg.params,2)))
+			
+			vector<whoisinfo>::iterator pos;
+			
+			if ((pos=whereinlist(liste, ntharg(msg.params,2)))!=liste->end())
 			{
-				liste->edit (ntharg(msg.params,2),ntharg(msg.params,4));
+				pos->host=ntharg(msg.params,4);
+			//	liste->edit (ntharg(msg.params,2),ntharg(msg.params,4));
 				(*whoiscnt)--;
 			}
 		}
@@ -129,20 +182,57 @@ extern "C" void plugin (plugincontext* context, ircmessage msg, TPluginParentLig
 		
 		if ((*whoiscnt==0)&&(*((char*)(context->data))==2))
 		{
-			parent->say ("fertig! YAY!");
+			int sz=liste->size();
+			int cnt;
+			
+			string saytemp;
+			bool shared=false;
+			
+			for (int i=0; i<sz; i++)
+			{
+				saytemp=(*liste)[i].who;
+				cnt=1;
+				if (   (*liste)[i].proc == false )
+				{
+					for (int j=i+1; j<sz; j++)
+					{
+						if (  (*liste)[i].host == (*liste)[j].host )
+						{
+							saytemp+=", "+(*liste)[j].who;
+							cnt++;
+							(*liste)[i].proc=true;
+						}
+					}
+				}
+				if (cnt>1)
+				{
+					parent->say(tostring(cnt)+" people are sharing the hostmask "+(*liste)[i].host+": "+saytemp);
+					shared=true;
+				}
+			}
+			
+			
+			if (!shared)
+				parent->say("there were no people sharing a hostmask in " + (**  ((string**)((char*)context->data+1)))+".");
+
+
+			string ** cptrdest= (string**) ((char*) context->data  +  1);
+			if (*cptrdest)
+				delete (*cptrdest);
+			*cptrdest=NULL;
+			
+			vector<whoisinfo> **lptr= (vector<whoisinfo> **) ((string**)(((char*) context->data+1))+1);					
+			*lptr=new vector<whoisinfo>;
+			if (*lptr)
+				delete (*lptr);
+			*lptr=NULL;
+					
 			*((char*)(context->data))=0;
 			
-/*			list<string> nicks = liste->give_list();
-			list<string> add = liste->give_additional();
-			
-			list<string>::iterator it1,it2;
-			it1=nicks.begin();
-			it2=add.begin();*/
-			
-			
-			
+			context->flags=PFLAGS_EXEC_ONDEMAND;
 		}
 
 		
 	}
 }
+

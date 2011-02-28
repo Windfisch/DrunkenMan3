@@ -16,6 +16,7 @@ using namespace std;
 
 #include "TPluginParent.h"
 #include "TConnection.h"
+#include "myfuncs.h"
 
 extern list<TPlugin*> plugins;
 
@@ -35,9 +36,10 @@ void TPluginParent::hiddenaddplugincontext(int flags,int csize)
 		}
 		catch (...)
 		{
-			cout << "PANIC: unable to create context data!" << endl; //todo: reaktion
-			cout << "HINT:  this should   N E V E R   happen! you don't have even "<<csize<<"bytes RAM free!" << endl;
+			cout << "PANIC: unable to create context data!" << endl;
+			cout << "HINT:  this should   N E V E R   happen! you don't have even "<<csize<<"bytes of RAM free!" << endl;
 			cout << "       consider rebooting your machine as soon as possible!" << endl;
+			panic();
 			cptr=NULL;
 		}
 	else

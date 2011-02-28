@@ -1,4 +1,23 @@
- o unter git stellen
+ o !votekick und !kick müssen best. kickfunktion aufrufen. die kann dann
+   kickban und nach 3 sec unban oder sowas machen.
+ o benutzergruppen; z.B. votekick-wahlberechtigt?
+
+ o ein plugin soll auf verschiedene commands ansprechen können
+   (z.B. !kick, !kickban etc)
+
+
+ o neuladen von listen + conf via plugins
+ o listenfunktionen: add/del z.B.(useradd, userdel)
+ o bot forken lassen (damit nohup wegfallen kann)
+ o user per nickserv identifizieren, alternative: passwort
+ o alle plugins sollen configfile nutzen
+
+
+ o bannlisten??? (mode #channel +b)
+
+ o einige sachen können mit maps besser gelöst werden
+ o DrunkenMan[,:] do_sth statt !do_sth als befehl-prefix
+     channel und session ist dafür relevant
  o slot- oder hook-konzept: plugins senden nicht mehr "KICK :foo", sondern
    rufen parent->do("KICK", arg1, ...) auf
    returnval: -1=no such hook, -2 .. -inf = error, 0..inf=ok

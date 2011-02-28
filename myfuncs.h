@@ -29,4 +29,5 @@ struct ircmode_t
 list<ircmode_t> parsemodes (string params);
 int numchanperm (string m);
 
+void panic();
 #endif

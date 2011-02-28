@@ -11,6 +11,7 @@
 #include <netdb.h>
 #include <cstring>
 #include <dlfcn.h>
+#include <cstdlib>
 
 #include "myfuncs.h"
 
@@ -225,4 +226,10 @@ int numchanperm (string m)
 		default: //WTF?
 			return 0;
 	}
+}
+
+void panic()
+{
+	cout << endl << "DrunkenMan panicked and commited suicide." << endl;
+	exit(1);
 }

@@ -21,7 +21,7 @@ extern "C" void plugin (plugincontext* context, ircmessage msg, TPluginParentLig
 	cout << "foo" << endl;
 	if (reason&PFLAGS_EXEC_ONDEMAND)
 	{
-		if (parent->get_parent()->ismaster(msg.origin))
+		if (parent->get_parent()->ismaster(msg.origin_raw))
 		{
 			cout << "bar" << endl;
 			parent->say("processing...");

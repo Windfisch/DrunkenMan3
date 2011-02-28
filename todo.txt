@@ -1,6 +1,0 @@
-main.cpp:		//dann sessions/channels kontrollieren lassen, ob diese nachricht interessant für diese ist (todo: names etc erkennen)
-main.cpp:		//pluginsend: im falle eines channels: notice oder privmsg oder ggf weitere channel-verwandte befehle (names #chan etc) (todo!)
-TConnection.cpp:	// TODO: ONCREATE
-TConnection.cpp:	return ""; //todo: oder servername?
-TPluginParent.cpp:	cout << "PANIC: unable to create context data!" << endl; //todo: reaktion
-TSession.cpp:		bool TSession::valid() //todo

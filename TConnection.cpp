@@ -652,6 +652,12 @@ void TConnection::deluser(string nick)
 
 bool TConnection::isuser(string nick)
 {
+	if (nick.find('!')==string::npos)
+	{
+		cout << "WARNING: called isuser() with stripped nick instead of raw_nick. returning false" << endl;
+		return false;
+	}
+	
 	if ((users_li.isinlist(cut_nick(nick))) && (users_li.get_info(cut_nick(nick))!=nick)) //still logged in, but wrong hostmask?
 	{
 		cout << "removing '"<<cut_nick(nick)<<"' from list of logged in users due to a hostmask mismatch" << endl;
@@ -673,6 +679,12 @@ void TConnection::delmaster(string nick)
 
 bool TConnection::ismaster(string nick)
 {
+	if (nick.find('!')==string::npos)
+	{
+		cout << "WARNING: called ismaster() with stripped nick instead of raw_nick. returning false" << endl;
+		return false;
+	}
+
 	if ((masters_li.isinlist(cut_nick(nick))) && (masters_li.get_info(cut_nick(nick))!=nick)) //still logged in, but wrong hostmask?
 	{
 		cout << "removing '"<<cut_nick(nick)<<"' from list of logged in masters due to a hostmask mismatch" << endl;

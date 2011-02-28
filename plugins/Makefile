@@ -4,6 +4,8 @@ all:
 %.so: %.cpp
 	$(CXX) $(CXXFLAGS) -shared -o $@ $^ ../myfuncs.cpp 
 
+ops.so: ../TUserList.o
+
 clean:
 	rm *.so *.o
 
