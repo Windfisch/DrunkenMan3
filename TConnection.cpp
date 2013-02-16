@@ -511,7 +511,7 @@ void TConnection::interpret_message(ircmessage msg) //ggf. neue sessions öffnen
 	
 	if (ucase(msg.command)=="JOIN")
 		if (ucase(msg.origin)==ucase(nick))
-			chans.push_back(new TChannel(msg.content,this));
+			chans.push_back(new TChannel(msg.params,this));
 		
 	if (ucase(msg.command)=="PART")
 		if (ucase(msg.origin)==ucase(nick))

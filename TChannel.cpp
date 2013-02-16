@@ -70,9 +70,9 @@ void TChannel::interpret_message (ircmessage msg)
 //	show_users();
 
 	string temp;
-	
+
 	if (  ucase(msg.command)=="JOIN" )
-		if (ucase(msg.content)==ucase(name))
+		if (ucase(msg.params)==ucase(name))
 		{
 			msg_for_us=true;
 			users.addtolist(msg.origin);

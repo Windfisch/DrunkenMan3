@@ -28,4 +28,18 @@
    
    plugins können folgendes tun:
    if (parent->do("timedkick"...)<0) parent->do("normalkick")
+   
+   ODER:
+   plugins stellen hook(string what, void* data, TConnection* parent)
+   bereit, und sagen in init, was sie können (kann auch "nichts" sein)
+   wenn nun ein plugin als "KICK" eingetragen ist, wird statt
+   dm's eigenem kick dieser hook gerufen, mit allen infos über den
+   momentanen verbindungskontext.
+   -> plugins können auch später noch darauf reagieren
+   
+   außerdem können hooks "antworten". dafür wird ein weiterer
+   exe-grund erstellt, nämlich REASON_ANSWER. den können plugins
+   nicht ignorieren.
+   so kann z.B. "is_master" erst einen whois starten, und erst dann
+   antworten, wenn der whois durch ist.
 

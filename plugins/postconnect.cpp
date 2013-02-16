@@ -22,7 +22,7 @@ extern "C" void plugin (plugincontext* context, ircmessage msg, TPluginParentLig
 		cout << parent->get_parent()->get_networkname() << endl;
 		cout << config.get_string(parent->get_parent()->get_networkname() + ".join") << endl;
 		//evtl aus datei lesen?
-		parent->get_parent()->send ("join #DrunkenMan" NEWLINE);
+		parent->get_parent()->send ("join " + config.get_string(parent->get_parent()->get_networkname() + ".join") + NEWLINE);
 		
 		if (config.is_string(parent->get_parent()->get_networkname()+".pass"))
 			parent->get_parent()->send("PRIVMSG NickServ :identify "+config.get_string(parent->get_parent()->get_networkname()+".nick")+" "+config.get_string(parent->get_parent()->get_networkname()+".pass"));
